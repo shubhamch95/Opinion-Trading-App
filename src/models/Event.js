@@ -5,21 +5,26 @@ const EventSchema = new mongoose.Schema({
          required: true },
 
     category: { type: String,
-         required: true }, // e.g., Football, Cricket
+         required: true }, 
 
     startTime: { type: Date,
          required: true },
          
     odds: { type: Object,
-         required: true }, // Store market odds (e.g., {teamA: 1.5, teamB: 2.3})
+         required: true },
          
     status: { type: String,
          enum: ['upcoming', 'live', 'completed'],
           default: 'upcoming' },
-          
-          winningOutcome: { type: String }  // Store event result (e.g., 'Team A')
+
+          winningOutcome: { type: String } 
 
 }, { timestamps: true });
 
+EventSchema.index({ status: 1 }); // Index on status for quick filtering
+EventSchema.index({ name: 1 }); // Index on event name for searches
+
 module.exports = mongoose.model('Event', EventSchema);
+
+
 

@@ -3,10 +3,9 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-// User Registration
 exports.register = async (req, res) => {
     try {
-        const { username, email, password, role } = req.body; // Added role
+        const { username, email, password, role } = req.body;
 
         let user = await User.findOne({ email });
         if (user) return res.status(400).json({ msg: 'User already exists' });
@@ -18,7 +17,7 @@ exports.register = async (req, res) => {
             username,
             email,
             password: hashedPassword,
-            role: role || 'user' // Default to 'user' if role is not provided
+            role: role || 'user'
         });
 
         await user.save();
@@ -29,8 +28,6 @@ exports.register = async (req, res) => {
     }
 };
 
-
-// User Login
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -44,9 +41,10 @@ exports.login = async (req, res) => {
         const payload = { 
             user: { 
                 id: user.id, 
-                role: user.role // Include role in payload
+                role: user.role 
             } 
         };
+        
         jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
             if (err) throw err;
             res.json({ token });
@@ -55,6 +53,31 @@ exports.login = async (req, res) => {
         res.status(500).json({ msg: 'Server Error', error: err.message });
     }
 };
+
+//     try {
+//         const { email, password } = req.body;
+        
+//         let user = await User.findOne({ email });
+//         if (!user) return res.status(400).json({ msg: 'Invalid Credentials' });
+
+//         const isMatch = await bcrypt.compare(password, user.password);
+//         if (!isMatch) return res.status(400).json({ msg: 'Invalid Credentials' });
+
+//         const payload = { 
+//             user: { 
+//                 id: user.id, 
+//                 role: user.role // Include role in payload
+//             } 
+//         };
+        
+//         jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
+//             if (err) throw err;
+//             res.json({ token });
+//         });
+//     } catch (err) {
+//         res.status(500).json({ msg: 'Server Error', error: err.message });
+//     }
+// };
 
 // Get User Profile
 exports.getUserProfile = async (req, res) => {
