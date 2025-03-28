@@ -1,6 +1,6 @@
 const Trade = require("../models/Trade");
 const Event = require("../models/Event");
-const { getWebSocketInstance } = require('../config/socket'); // Correct import
+const { getWebSocketInstance } = require('../config/socket');
 const { executeTrades } = require('../utils/tradeUtils');
 
 exports.createEvent = async (req, res) => {
@@ -55,14 +55,12 @@ exports.updateEventStatus = async (req, res) => {
             return res.status(404).json({ message: "Event not found" });
         }
 
-        // Update event status and winning outcome
         event.status = status;
         if (status === "completed" && winningOutcome) {
             event.winningOutcome = winningOutcome;
         }
         await event.save();
 
-        // Get WebSocket instance and broadcast event update
         const wss = getWebSocketInstance();
         if (wss && wss.clients) {
             wss.clients.forEach((client) => {
@@ -72,7 +70,6 @@ exports.updateEventStatus = async (req, res) => {
             });
         }
 
-        // If event is completed, execute trades
         if (status === "completed" && winningOutcome) {
             await executeTrades(id, winningOutcome);
         }
@@ -82,35 +79,6 @@ exports.updateEventStatus = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-
-// exports.updateEventStatus = async (req, res) => {
-//     try {
-//         const { id } = req.params;
-//         const { status, winningOutcome } = req.body;
-
-//         if (!['upcoming', 'live', 'completed'].includes(status)) {
-//             return res.status(400).json({ message: "Invalid status update" });
-//         }
-
-//         const event = await Event.findByIdAndUpdate(id, { status, winningOutcome }, { new: true });
-
-//         if (!event) {
-//             return res.status(404).json({ message: "Event not found" });
-//         }
-
-//         // Emit real-time event update
-//         io.to(id).emit('eventUpdated', event);
-
-//         // If event is completed, update related trades
-//         if (status === 'completed') {
-//             await executeTrades(id, winningOutcome, io);
-//         }
-
-//         res.json({ message: "Event updated successfully", event });
-//     } catch (error) {
-//         res.status(500).json({ message: error.message });
-//     }
-// };
 
 
 

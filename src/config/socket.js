@@ -24,7 +24,6 @@ const initializeSocket = (server) => {
     }
 };
 
-// Return the WebSocket instance
 const getWebSocketInstance = () => wss;
 
 module.exports = { initializeSocket, getWebSocketInstance };

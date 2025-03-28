@@ -1,7 +1,6 @@
 const Trade = require('../models/Trade');
 const { getWebSocketInstance } = require('../config/socket');
 
-// Function to update trade status and emit real-time updates
 const executeTrades = async (eventId, winningOutcome) => {
     try {
         const trades = await Trade.find({ event: eventId }).lean();
@@ -17,10 +16,8 @@ const executeTrades = async (eventId, winningOutcome) => {
 
         await Trade.bulkWrite(bulkUpdates);
 
-        // Get WebSocket instance
         const wss = getWebSocketInstance();
 
-        // Notify clients about trade updates
         trades.forEach(trade => {
             const newStatus = trade.selection === winningOutcome ? "won" : "lost";
             

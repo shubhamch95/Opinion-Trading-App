@@ -21,8 +21,8 @@ const EventSchema = new mongoose.Schema({
 
 }, { timestamps: true });
 
-EventSchema.index({ status: 1 }); // Index on status for quick filtering
-EventSchema.index({ name: 1 }); // Index on event name for searches
+EventSchema.index({ status: 1 });
+EventSchema.index({ name: 1 });
 
 module.exports = mongoose.model('Event', EventSchema);
 

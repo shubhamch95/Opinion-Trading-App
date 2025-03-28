@@ -14,14 +14,13 @@ const TradeSchema = new mongoose.Schema({
          required: true },
 
     selection: { type: String,
-         required: true }, // NEW FIELD: Stores "teamA" or "teamB"
+         required: true },
 
     odds: { type: Number, required: true },
     
     status: { type: String, enum: ['pending', 'won', 'lost'], default: 'pending' }
 }, { timestamps: true });
 
-// Existing Index (if any)
 TradeSchema.index({ user: 1 });  
 TradeSchema.index({ event: 1 });
 TradeSchema.index({ status: 1 });

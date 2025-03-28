@@ -16,24 +16,23 @@ exports.fetchLiveData = async () => {
         const response = await axios.get(API_URL, {
             params: {
                 apiKey: SPORTS_API_KEY,
-                regions: 'us', // Keep 'us' since curl request worked
-                markets: 'h2h,spreads', // Fetch Head-to-head and Spread odds
+                regions: 'us', 
+                markets: 'h2h,spreads',
             }
         });
 
-        console.log("✅ API Response Received:", response.data.length, "events");
+        console.log("API Response Received:", response.data.length, "events");
 
-        // Transform API data to match MongoDB Event model
         return response.data.map(event => ({
-            name: `${event.home_team} vs ${event.away_team}`,  // Constructing a meaningful name
-            category: event.sport_title,  // Matching sport_title to category
-            startTime: new Date(event.commence_time),  // Converting to Date object
+            name: `${event.home_team} vs ${event.away_team}`,
+            category: event.sport_title, 
+            startTime: new Date(event.commence_time), 
             odds: event.bookmakers.reduce((acc, bm) => {
-                acc[bm.title] = bm.markets;  // Converting array to object for better MongoDB structure
+                acc[bm.title] = bm.markets; 
                 return acc;
             }, {}),
-            status: 'upcoming',  // Defaulting to upcoming (can be updated later)
-            winningOutcome: null  // Will be updated after the event is completed
+            status: 'upcoming', 
+            winningOutcome: null
         }));
     } catch (error) {
         console.error(" Error fetching live data:", error.response ? error.response.data : error.message);
